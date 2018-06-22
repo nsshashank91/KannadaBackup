@@ -1,0 +1,52 @@
+1 Noun NN
+2 Noun Location NST
+3 Proper Noun NNP
+4 Pronoun PRP
+5 Compound Words XC
+6 Demonstration DEM
+7 Post Position PSP
+8 Conjuncts CC
+9 Verb VM
+10 Adverb RB
+11 Particles RP
+12 Adjectives JJ
+13 Auxiliary Verb VAUX
+14 Negation NEG
+15 Quantifiers QF
+16 Cardinal QC
+17 Ordinal QO
+18 Question Words WQ
+19 Intensifiers INTF
+20 Interjection INJ
+21 Reduplication RDP
+22 Unknown Words UNK
+23 Symbol SYM
+
+*****************
+
+NN – Noun
+NST – Nloc
+NNP – Proper Noun
+PRP – Pronoun
+DEM – Demonstrative
+VM – Verb-Finite
+VAUX –Verb Aux
+JJ – Adjective
+RB – Adverb
+PSP – Post Position
+RP – Particles
+CC – Conjuncts
+WQ – Question Words
+QF – Quantifiers
+QC – Cardinal
+QO – Ordinal
+CL – Classifier
+INTF – Intensifier
+INJ – Interjection
+NEG – Negation
+UT – Quotative
+SYM – Sym
+*C – Compounds
+RDP – Reduplicative
+ECH – Echo
+UNK - Unkown

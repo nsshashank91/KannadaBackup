@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Word Sense Disambiguation</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+</head>
+
+<body>
+
+	<script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+
+	<div class="container">
+		<div class="page-header">
+		  <h1>Statistical Study and Analysis of Polysemy Words in Kannada Language for Various Text Processing Applications</h1>
+		</div>
+	</div>
+
+	<div id="LoadingImage" style="display: none; position:fixed; z-index: 100; margin-left:600px">
+	  <img src="loading.gif" />
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<ul class="nav nav-pills">
+  				<li><a href="index.html">Home</a></li>
+				 <li class="active">
+				 	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Disambiguator <span class="caret"></span></a>
+				 	<ul class="dropdown-menu">
+				 		<li><a href="index2.html">Double Polysemy Occurrence</a></li>
+				 		<li class="active"><a href="#">Single Polysemy Occurrence</a></li>
+				 	</ul>
+				 </li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<form id="kannada" method="POST" enctype="multipart/form-data">
+			  <div class="form-group">
+			    <label for="file1">File</label>
+    			<input type="file" class="form-control-file" id="file1" name="file1">
+			  </div>
+			  <button type="submit" id="file_submit" class="btn btn-info">Upload File</button>
+			</form>
+		</div>
+	</div>
+	<br/>
+	<div class="container">
+		<div class="row">
+			<button id="preprocess_button" class="btn btn-danger">Preprocess</button>
+			<a id="parse_button" class="btn btn-danger" href="http://localhost:8080/testSem4.html">Parse Semantics</a>
+			<button id="semantics_button" class="btn btn-danger">Obtain Semantics</button>
+			<button id="disambiguate_button" class="btn btn-success">Disambiguate</button>
+		</div>
+	</div>
+
+	<br/>
+	<div class="container">
+		<div class="row">
+			<div id="input_sentence"></div>
+		</div>
+		<div class="row">
+			<div id="polysemy_word"></div>
+		</div>
+		<div class="row">
+			<div id="meaning"></div>
+		</div>
+	</div>
+
+	<div id="wsd_footer">
+		<div class="footer-copyright"
+		style="color:blue; position: fixed; 
+		margin-left: 400px; margin-top:220px">
+	        © 2018 Ramaiah Institute of Technology, Department of Computer Science Engineering
+	 </div>
+	</div>
+	<script>
+		$(document).ready(function(){
+			$("form#kannada").submit(function(e){
+				e.preventDefault(); 
+				$("#input_sentence").html("");
+		        $("#polysemy_word").html("");
+		        $("#meaning").html("");
+				$("#LoadingImage").show();
+				var formData = new FormData(this);
+				 $.ajax({
+			        url: 'http://localhost:9080/kannada/uploadFile',
+			        type: 'POST',
+			        data: formData,
+			        cache : false, 
+			    	processData: false,
+					contentType: false,
+		            success: function(text){
+		            	$("#LoadingImage").hide();
+		            },
+		            error: function(xhr,status){
+		            	$("#LoadingImage").hide();
+		            }
+			    });
+				  $.alert({
+    				title: 'File Uploaded',
+    				content: 'Upload is successful'
+				});
+				 $("#preprocess_button").attr('disabled',false);
+				 $("#parse_button").attr('disabled',true);
+		         $("#semantics_button").attr('disabled',true);
+				 $("#disambiguate_button").attr('disabled',true);
+
+			});
+
+			$("#preprocess_button").click(function(){
+				$("#preprocess_button").attr('disabled',true);
+		        $("#LoadingImage").show();
+		        $("#input_sentence").html("");
+		        $("#polysemy_word").html("");
+		        $("#meaning").html("");
+		         $.ajax({
+		            url : 'http://localhost:9080/kannada2/preprocess',
+		            dataType: 'jsonp',
+					cache: false,
+					async: false,
+					type: 'GET',
+					contentType: 'application/json; charset=utf-8',
+					jsonp: false,
+					jsonpCallback: "callbackToken",
+		            success: function(data){
+		            	$("#LoadingImage").hide();
+		            	$("#preprocess_button").attr('disabled',true);
+				 		$("#parse_button").attr('disabled',false);
+		         		$("#semantics_button").attr('disabled',true);
+				 		$("#disambiguate_button").attr('disabled',true);
+				 		$.alert({
+    						title: 'Preprocessing Completed',
+    						content: 'Data preprocessing is successful'
+						});
+		            },
+		            error: function(text){
+		            	
+		            	$("#LoadingImage").hide();
+		            	$.alert({
+    						title: 'Error',
+    						content: 'Error while preprocessing. Please try again'
+						});
+		            }
+		        });
+
+		    });
+
+		    $("#semantics_button").click(function(){
+		 
+		        $("#input_sentence").html("");
+		        $("#polysemy_word").html("");
+		        $("#meaning").html("");
+		        $.ajax({
+		             url : 'http://localhost:9080/kannada2/semantics',
+		            dataType: 'jsonp',
+					cache: false,
+					async: false,
+					type: 'GET',
+					contentType: 'application/json; charset=utf-8',
+					jsonp: false,
+					jsonpCallback: "callbackToken",
+		            success: function(data){
+		            	
+		            	$("#LoadingImage").hide();
+		            	$("#preprocess_button").attr('disabled',true);
+				 		$("#parse_button").attr('disabled',true);
+		         		$("#semantics_button").attr('disabled',true);
+				 		$("#disambiguate_button").attr('disabled',false);
+				 		$.alert({
+    						title: 'Semantics Processing Completed',
+    						content: 'Semantic Data Processing is successful'
+						});
+
+		            },
+		            error: function(text){
+		            	
+		            	$("#LoadingImage").hide();
+		            	$.alert({
+    						title: 'Error',
+    						content: 'Error while semantic Processing. Please try again'
+						});
+		            }
+		        });
+		    });
+
+		    $("#disambiguate_button").click(function(){
+		        
+		        $("#LoadingImage").show();
+		         $.ajax({
+		            url : 'http://localhost:9080/kannada2/disambiguate',
+		            dataType: 'jsonp',
+					cache: false,
+					async: false,
+					type: 'GET',
+					contentType: 'application/json; charset=utf-8',
+					jsonp: false,
+					jsonpCallback: "callbackToken",
+		            success: function(data){
+		            	
+		            	$("#input_sentence").html("<b>Input sentence is</b><p> "+data.input+"</p>");
+		            	$("#polysemy_word").html("<b>Polysemy Word is</b><p> "+data.polysemy+"</p>");
+		            	$("#meaning").html("<b>Matched Meaning is</b><p> "+data.sense+"</p>");
+		            	$("#LoadingImage").hide();
+		            	$("#preprocess_button").attr('disabled',true);
+				 		$("#parse_button").attr('disabled',true);
+		         		$("#semantics_button").attr('disabled',true);
+				 		$("#disambiguate_button").attr('disabled',true);
+
+		            },
+		            error: function(text){
+		            	
+		            	//console.log(JSON.stringify(text));
+		            	$("#LoadingImage").hide();
+		            	$.alert({
+    						title: 'Error',
+    						content: 'Error while Disambiguation. Please try again'
+						});
+		            }
+		        });
+		         $("form#kannada")[0].reset();
+		    });
+		});
+	</script>
+
+</body>
+</html>
